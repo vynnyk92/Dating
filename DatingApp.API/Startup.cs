@@ -27,6 +27,7 @@ namespace DatingApp.API
         {
             services.AddMvc();
             services.AddDbContext<DataContext>(x=>x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))); //"Data Source = .\\SQLEXPRESS; Initial Catalog = DatingApp; Trusted_Connection = True; "
+            services.AddCors();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -36,8 +37,9 @@ namespace DatingApp.API
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin().AllowCredentials());
             app.UseMvc();
+
         }
     }
 }
