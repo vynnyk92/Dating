@@ -2,4 +2,5 @@ bin
 obj
 .vscode
 *.db
+*.dll
 node_modules
