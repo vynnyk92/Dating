@@ -1,13 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace DatingApp.API.DTOs
 {
-    public class UserDTO
+    public class UserRegisterDTO
     {
+        [Required]
+        [StringLength(8, MinimumLength =4)]
         public string Username { get; set; }
+        [Required]
+        [StringLength(8, MinimumLength = 4)]
+        public string Password { get; set; }
+    }
+
+    public class UserLoginDTO
+    {
+        [Required]
+        [StringLength(8, MinimumLength = 4)]
+        public string Username { get; set; }
+        [Required]
+        [StringLength(8, MinimumLength = 4)]
         public string Password { get; set; }
     }
 }
