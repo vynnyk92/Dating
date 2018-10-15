@@ -16,11 +16,10 @@ export class RegisterComponent implements OnInit {
   }
 
   register(){
-    //console.log(this.model);
     this.auth.register(this.model).subscribe((response)=>{
       console.log('Register success!');
     }, error=>{
-      console.log('Register failed!');
+      console.log(error);
     });
   }
   cancel(){

@@ -30,8 +30,9 @@ namespace DatingApp.API.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody]UserRegisterDTO userDTO)
         {
+            if (!string.IsNullOrEmpty(userDTO.Username))
+                userDTO.Username = userDTO.Username.ToLower();
 
-            userDTO.Username = userDTO.Username.ToLower();
 
             if (await authRepository.UserExist(userDTO.Username))
             {
@@ -56,6 +57,7 @@ namespace DatingApp.API.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody]UserLoginDTO userDTO)
         {
+            throw new OutOfMemoryException();
 
             var createUser = await authRepository.Login(userDTO.Username.ToLower(), userDTO.Password);
             if (createUser == null)
@@ -78,7 +80,9 @@ namespace DatingApp.API.Controllers
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var tokenString = tokenHandler.WriteToken(token);
 
-            return Ok(new { tokenString});
+            return Ok(new { tokenString });
+
         }
+           
     }
 }
