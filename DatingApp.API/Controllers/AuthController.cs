@@ -57,8 +57,6 @@ namespace DatingApp.API.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody]UserLoginDTO userDTO)
         {
-            throw new OutOfMemoryException();
-
             var createUser = await authRepository.Login(userDTO.Username.ToLower(), userDTO.Password);
             if (createUser == null)
                 return Unauthorized();
