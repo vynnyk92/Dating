@@ -13,9 +13,11 @@ namespace DatingApp.API.Implementations
     public class AuthRepository : IAuthRepository
     {
         public DataContext DataContext { get; set; }
-        public AuthRepository(DataContext dbContext)
+        public IPasswordHashCreator passwordHashCreator { get; set; }
+        public AuthRepository(DataContext dbContext, IPasswordHashCreator passwordHashCreator)
         {
             this.DataContext = dbContext;
+            this.passwordHashCreator = passwordHashCreator;
         }
 
         public async Task<User> Login(string userName, string password)
@@ -65,11 +67,7 @@ namespace DatingApp.API.Implementations
 
         private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
         {
-            using (var hmac = new HMACSHA512())
-            {
-                passwordSalt = hmac.Key;
-                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-            }
+            passwordHashCreator.CreatePasswordHash(password, out passwordHash, out passwordSalt);
         }
 
         public async Task<bool> UserExist(string username)

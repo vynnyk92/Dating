@@ -5,10 +5,11 @@ import { tokenNotExpired, JwtHelper } from "angular2-jwt";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/catch";
 import "rxjs/add/observable/throw";
+import { environment } from "../../environments/environment";
 
 @Injectable()
 export class AuthService {
-  private baseUrl: string = "http://localhost:23164/api/auth";
+  private baseUrl: string = environment.baseUrl+"/auth";
   userToken: any;
   decodedToken: any;
   jwtHelper:JwtHelper = new JwtHelper();
