@@ -24,6 +24,10 @@ export class UserService {
         return this.authHttp.get(`${this.baseUrl}/${id}`).map(responsonse=><User>responsonse.json()).catch(this.handleError);
     }
     
+    updateUser(id: number, user: User){
+      return this.authHttp.put(`${this.baseUrl}/${id}`, user).catch(this.handleError);
+    }
+
   private handleError(error: any) {
     const appError = error.headers.get("Application-Error");
     if (appError) {

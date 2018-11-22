@@ -35,7 +35,7 @@
           <li class="dropdown" dropdown>
             <a (click)="false" class="dropdown-toggle" dropdownToggle>Welcome {{auth.decodedToken?.unique_name}} <span class="caret"></span></a>
             <ul class="dropdown-menu" *dropdownMenu>
-              <li><a><i class="fa fa-user"></i>Edit Profile</a></li>
+              <li><a [routerLink]="['/members/edit']" ><i class="fa fa-user"></i>Edit Profile</a></li>
               <li role="separator" class="divider"></li>
               <li><a (click)="logout()"><i class="fa fa-sign-out"></i> Logout</a></li>
             </ul>
