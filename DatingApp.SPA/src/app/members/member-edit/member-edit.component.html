@@ -13,7 +13,7 @@
     <div class="col-sm-4">
       <div class="panel panel-default">
         <img
-          src="{{user?.photoUrl}}"
+          src="{{photoUrl}}"
           class="profile-image thumbnail"
           alt="{{user?.knownAs}}"
         />
@@ -86,7 +86,9 @@
               </div>
             </form>
           </tab>
-          <tab heading="Edit photos"> Edit TODO: </tab>
+          <tab heading="Edit photos">
+              <app-photo-editor [photos]="user.photos" (change)="updateMainPhoto($event)"></app-photo-editor> 
+          </tab>
         </tabset>
       </div>
     </div>

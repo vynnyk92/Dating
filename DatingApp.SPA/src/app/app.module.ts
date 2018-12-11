@@ -26,6 +26,9 @@ import { NgxGalleryModule } from 'ngx-gallery';
 import { MemberEditComponent } from './members/member-edit/member-edit.component';
 import { MemberEditResolver } from './_resolvers/member-edit.resolver';
 import { PreventUnsavedchanges } from './_guards/prevent-unsavedchanges';
+import { PhotoEditorComponent } from './members/photo-editor/photo-editor.component';
+import { FileUploadModule } from '../../node_modules/ng2-file-upload/file-upload/file-upload.module';
+import { PhotoService } from './services/photo.service';
 
 @NgModule({
    declarations: [
@@ -38,7 +41,8 @@ import { PreventUnsavedchanges } from './_guards/prevent-unsavedchanges';
       MessagesComponent,
       MemberCardComponent,
       MemberDetailComponent,
-      MemberEditComponent
+      MemberEditComponent,
+      PhotoEditorComponent
    ],
    imports: [
       BrowserModule,
@@ -48,7 +52,8 @@ import { PreventUnsavedchanges } from './_guards/prevent-unsavedchanges';
       RouterModule.forRoot(appRoutes),
       AuthModule,
       NgxGalleryModule,
-      TabsModule.forRoot()
+      TabsModule.forRoot(),
+      FileUploadModule
    ],
    providers: [
       AuthService,
@@ -57,7 +62,8 @@ import { PreventUnsavedchanges } from './_guards/prevent-unsavedchanges';
       UserService,
       MemberDetailResolver,
       MemberEditResolver,
-      PreventUnsavedchanges
+      PreventUnsavedchanges,
+      PhotoService
    ],
 
    bootstrap: [

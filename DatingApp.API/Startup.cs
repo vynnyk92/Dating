@@ -40,6 +40,7 @@ namespace DatingApp.API
             var key = Encoding.ASCII.GetBytes(Configuration.GetSection("AppSettings:token").Value);
             services.AddScoped<IPasswordHashCreator, PasswordHashCreator>();
             services.AddScoped<IDatingRepository, DatingRepository>();
+            services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));
             services.AddTransient<Seed>();
             services.AddMvc();
             services.AddDbContext<DataContext>(x=>x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))); //"Data Source = .\\SQLEXPRESS; Initial Catalog = DatingApp; Trusted_Connection = True; "

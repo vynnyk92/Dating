@@ -6,14 +6,24 @@ import "rxjs/add/operator/map";
 import "rxjs/add/operator/catch";
 import "rxjs/add/observable/throw";
 import { environment } from "../../environments/environment";
+import { User } from "../_models/user";
+import { BehaviorSubject } from "rxjs/BehaviorSubject";
 
 @Injectable()
 export class AuthService {
   private baseUrl: string = environment.baseUrl+"/auth";
   userToken: any;
   decodedToken: any;
+  currenUser: User;
   jwtHelper:JwtHelper = new JwtHelper();
+  private photoUrl = new BehaviorSubject<string>('../../asserts/user.png');  
+  currentPhotoUrl = this.photoUrl.asObservable();
+
   constructor(private http: Http) {}
+
+  changeMemberPhoto(photoUrl: string){
+    this.photoUrl.next(photoUrl);
+  }
 
   loggedIn(){
      return tokenNotExpired('token');
@@ -26,9 +36,12 @@ export class AuthService {
         const user = res.json();
         if (user) {
           localStorage.setItem("token", user.tokenString);
+          localStorage.setItem("user", JSON.stringify(user.user));
           this.decodedToken = this.jwtHelper.decodeToken(user.tokenString);
           console.log(this.decodedToken);
           this.userToken = user.tokenString;
+          this.currenUser = user.user;
+          this.changeMemberPhoto(this.currenUser.photoUrl);
         }
       }).catch(this.handleError);
   }

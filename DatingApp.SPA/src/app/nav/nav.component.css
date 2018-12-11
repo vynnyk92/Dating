@@ -1,8 +1,14 @@
-.dropdown-menu li{
+.dropdown-menu li, .dropdown-toggle{
     cursor: pointer;
 }
 
 active{
     color: whitesmoke;
     background-color: bisque;
+}
+
+img{
+    max-height: 50px;
+    border: 2px solid white;
+    display: inline;
 }

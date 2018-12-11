@@ -20,5 +20,5 @@ export interface Photo {
     url:string;
     description:string;
     dateAdded:Date;
-    MainPhoto:boolean;
+    mainPhoto:boolean;
 }

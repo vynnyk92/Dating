@@ -31,6 +31,9 @@
       </form>
 
       <ul *ngIf="loggedIn()" class="nav navbar-nav navbar-right">
+          <li>
+            <img src="{{photoUrl}}" alt="">
+          </li>
           <li><a (click)="logout()">Logout</a></li>
           <li class="dropdown" dropdown>
             <a (click)="false" class="dropdown-toggle" dropdownToggle>Welcome {{auth.decodedToken?.unique_name}} <span class="caret"></span></a>

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using DatingApp.API.DTOs;
 using DatingApp.API.Implementations;
 using DatingApp.API.Interfaces;
@@ -21,10 +22,13 @@ namespace DatingApp.API.Controllers
     {
         public IAuthRepository authRepository { get; set; }
         public IConfiguration configuration { get; set; }
-        public AuthController(IAuthRepository AuthRepository, IConfiguration configData)
+        private IMapper mapper { get; set; }
+
+        public AuthController(IAuthRepository AuthRepository, IConfiguration configData, IMapper mapper)
         {
             this.authRepository = AuthRepository;
             this.configuration = configData;
+            this.mapper = mapper;
         }
 
         [HttpPost("register")]
@@ -69,7 +73,7 @@ namespace DatingApp.API.Controllers
                 Subject = new System.Security.Claims.ClaimsIdentity(new Claim[]
                 {
                     new Claim(ClaimTypes.NameIdentifier, createUser.Id.ToString()),
-                    new Claim(ClaimTypes.Name, createUser.Username),
+                    new Claim(ClaimTypes.Name, createUser.Username)
                 }),
                 Expires = DateTime.Now.AddDays(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha512Signature)
@@ -78,7 +82,9 @@ namespace DatingApp.API.Controllers
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var tokenString = tokenHandler.WriteToken(token);
 
-            return Ok(new { tokenString });
+            var user = this.mapper.Map<UserForListDTO>(createUser);
+
+            return Ok(new { tokenString, user });
 
         }
            
