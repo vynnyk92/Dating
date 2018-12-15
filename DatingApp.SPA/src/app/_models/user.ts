@@ -13,6 +13,8 @@ export interface User {
     introduction?: string;
     lookingFor?:string;
     photos?:Photo[];
+    confirmPassword?: string;
+    password?:string
 }
 
 export interface Photo {

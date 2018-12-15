@@ -11,22 +11,24 @@ import { BehaviorSubject } from "rxjs/BehaviorSubject";
 
 @Injectable()
 export class AuthService {
-  private baseUrl: string = environment.baseUrl+"/auth";
+  private baseUrl: string = environment.baseUrl + "/auth";
   userToken: any;
   decodedToken: any;
   currenUser: User;
-  jwtHelper:JwtHelper = new JwtHelper();
-  private photoUrl = new BehaviorSubject<string>('../../asserts/user.png');  
+  jwtHelper: JwtHelper = new JwtHelper();
+  private photoUrl = new BehaviorSubject<string>("../assets/user.png");
   currentPhotoUrl = this.photoUrl.asObservable();
 
   constructor(private http: Http) {}
 
-  changeMemberPhoto(photoUrl: string){
-    this.photoUrl.next(photoUrl);
+  changeMemberPhoto(photoUrl: string) {
+    
+      this.photoUrl.next(photoUrl);
+
   }
 
-  loggedIn(){
-     return tokenNotExpired('token');
+  loggedIn() {
+    return tokenNotExpired("token");
   }
 
   login(model: any) {
@@ -41,17 +43,36 @@ export class AuthService {
           console.log(this.decodedToken);
           this.userToken = user.tokenString;
           this.currenUser = user.user;
-          this.changeMemberPhoto(this.currenUser.photoUrl);
+          if (this.currenUser.photoUrl !== null) {
+            this.changeMemberPhoto(this.currenUser.photoUrl);
+          } else {
+            this.changeMemberPhoto("../assets/user.png");
+          }
         }
-      }).catch(this.handleError);
+        if (user) {
+          localStorage.setItem("token", user.tokenString);
+          localStorage.setItem("user", JSON.stringify(user.user));
+          this.decodedToken = this.jwtHelper.decodeToken(user.tokenString);
+          console.log(this.decodedToken);
+          this.userToken = user.tokenString;
+          this.currenUser = user.user;
+        }
+        if (user) {
+          localStorage.setItem("token", user.tokenString);
+          localStorage.setItem("user", JSON.stringify(user.user));
+          this.decodedToken = this.jwtHelper.decodeToken(user.tokenString);
+          console.log(this.decodedToken);
+          this.userToken = user.tokenString;
+          this.currenUser = user.user;
+        }
+      })
+      .catch(this.handleError);
   }
 
   register(model: any) {
-    return this.http.post(
-      this.baseUrl + "/register",
-      model,
-      this.requestOptions()
-    ).catch(this.handleError);
+    return this.http
+      .post(this.baseUrl + "/register", model, this.requestOptions())
+      .catch(this.handleError);
   }
 
   private requestOptions(): RequestOptions {
@@ -71,10 +92,10 @@ export class AuthService {
     if (serverError) {
       for (const key in serverError) {
         if (serverError[key]) {
-          modelStateError+=serverError[key]+'\n';
+          modelStateError += serverError[key] + "\n";
         }
       }
-    return Observable.throw(modelStateError || 'Server error');
+      return Observable.throw(modelStateError || "Server error");
     }
   }
 }
