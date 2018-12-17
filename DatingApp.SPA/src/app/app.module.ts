@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgModule } from '@angular/core';
 import { HttpModule } from '@angular/http';
-
+import {TimeAgoPipe} from 'time-ago-pipe';
 
 import { AppComponent } from './app.component';
 import { NavComponent } from './nav/nav.component';
@@ -10,7 +10,7 @@ import { AuthService } from './services/auth.service';
 import { RegisterComponent } from './register/register.component';
 import { HomeComponent } from './home/home.component';
 import { AlertifyService } from './services/alertify.service';
-import { BsDropdownModule, TabsModule, BsDatepickerModule } from 'ngx-bootstrap';
+import { BsDropdownModule, TabsModule, BsDatepickerModule, PaginationModule } from 'ngx-bootstrap';
 import { MemberListComponent } from './members/member-list/member-list.component';
 import { ListsComponent } from './lists/lists.component';
 import { MessagesComponent } from './messages/messages.component';
@@ -29,6 +29,7 @@ import { PreventUnsavedchanges } from './_guards/prevent-unsavedchanges';
 import { PhotoEditorComponent } from './members/photo-editor/photo-editor.component';
 import { FileUploadModule } from '../../node_modules/ng2-file-upload/file-upload/file-upload.module';
 import { PhotoService } from './services/photo.service';
+import { MemberListResolver } from './_resolvers/member-list.resolver';
 
 @NgModule({
    declarations: [
@@ -42,7 +43,8 @@ import { PhotoService } from './services/photo.service';
       MemberCardComponent,
       MemberDetailComponent,
       MemberEditComponent,
-      PhotoEditorComponent
+      PhotoEditorComponent,
+      TimeAgoPipe
    ],
    imports: [
       BrowserModule,
@@ -56,6 +58,7 @@ import { PhotoService } from './services/photo.service';
       FileUploadModule,
       ReactiveFormsModule,
       BsDatepickerModule.forRoot(),
+      PaginationModule.forRoot()
    ],
    providers: [
       AuthService,
@@ -64,6 +67,7 @@ import { PhotoService } from './services/photo.service';
       UserService,
       MemberDetailResolver,
       MemberEditResolver,
+      MemberListResolver,
       PreventUnsavedchanges,
       PhotoService
    ],

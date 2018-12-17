@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DatingApp.API.Data;
+using DatingApp.API.Helpers;
 using DatingApp.API.Interfaces;
 using DatingApp.API.Models;
 using Microsoft.EntityFrameworkCore;
@@ -33,9 +34,29 @@ namespace DatingApp.API.Implementations
             return user;
         }
 
-        public async Task<IEnumerable<User>> GetUsersAsync()
+        public async Task<PagedList<User>> GetUsersAsync(UserParams userParams)
         {
-            var users = await this.dataContext.Users.Include(u => u.Photos).ToListAsync();
+            var userQuery = this.dataContext.Users.Include(u => u.Photos).OrderByDescending(u=>u.LastActive).Where(u => u.Id != userParams.UserId && u.Gender == userParams.Gender);
+
+            if(userParams.MinAge!=18 || userParams.MaxAge != 99)
+            {
+                userQuery = userQuery.Where(u=>u.DateOfBirth.CalculateAge()>=userParams.MinAge && u.DateOfBirth.CalculateAge() <= userParams.MaxAge);
+            }
+
+            if (!string.IsNullOrEmpty(userParams.OrderBy))
+            {
+                switch (userParams.OrderBy)
+                {
+                    case "created":
+                        userQuery = userQuery.OrderByDescending(u=>u.Created);
+                        break;
+                    default:
+                        userQuery = userQuery.OrderByDescending(u => u.LastActive);
+                        break;
+                }
+            }
+
+            var users = await PagedList<User>.CreateAsync(userQuery, userParams.PageNumber, userParams.PageSize);
             return users;
         }
 
