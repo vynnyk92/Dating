@@ -30,6 +30,7 @@ import { PhotoEditorComponent } from './members/photo-editor/photo-editor.compon
 import { FileUploadModule } from '../../node_modules/ng2-file-upload/file-upload/file-upload.module';
 import { PhotoService } from './services/photo.service';
 import { MemberListResolver } from './_resolvers/member-list.resolver';
+import { ListResolver } from './_resolvers/list.resolver';
 
 @NgModule({
    declarations: [
@@ -69,7 +70,8 @@ import { MemberListResolver } from './_resolvers/member-list.resolver';
       MemberEditResolver,
       MemberListResolver,
       PreventUnsavedchanges,
-      PhotoService
+      PhotoService,
+      ListResolver
    ],
 
    bootstrap: [

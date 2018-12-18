@@ -56,6 +56,19 @@ namespace DatingApp.API.Implementations
                 }
             }
 
+            if (userParams.Likers)
+            {
+                var userLikers = await GetLikes(userParams.UserId, userParams.Likers);
+                userQuery = userQuery.Where(u => userLikers.Any(liker => liker.LikerId == u.Id));
+            }
+            else if (userParams.Likees)
+            {
+                var userLikees = await GetLikes(userParams.UserId, userParams.Likers);
+                userQuery = userQuery.Where(u => userLikees.Any(likee => likee.LikeeId == u.Id));
+            }
+           
+
+
             var users = await PagedList<User>.CreateAsync(userQuery, userParams.PageNumber, userParams.PageSize);
             return users;
         }
@@ -76,6 +89,23 @@ namespace DatingApp.API.Implementations
         {
             var photo = await this.dataContext.Photos.Where(p => p.UserId == userId && p.MainPhoto == true).FirstOrDefaultAsync();
             return photo;
+        }
+
+        public async Task<Like> GetLikeAsync(int senderId, int recieverId)
+        {
+            var like = await dataContext.Likes.FirstOrDefaultAsync(l=> l.LikerId == senderId && l.LikeeId == recieverId);
+            return like;
+        }
+
+        public async Task<IEnumerable<Like>> GetLikes(int id, bool likers)
+        {
+            var user = await dataContext.Users.Include(x => x.Likee).Include(x => x.Liker).FirstOrDefaultAsync(u => u.Id == id);
+
+            if (likers) {
+                return user.Likee.Where(u => u.LikeeId == id);
+            }
+            else
+                return user.Likee.Where(u => u.LikerId == id);
         }
     }
 }

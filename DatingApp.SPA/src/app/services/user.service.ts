@@ -9,6 +9,7 @@ import "rxjs/add/operator/catch";
 import "rxjs/add/observable/throw";
 import { AuthHttp } from 'angular2-jwt';
 import { PaginatedResult, UserFilter } from '../models/pagination';
+import { HttpResponse } from 'selenium-webdriver/http';
 
 @Injectable()
 export class UserService {
@@ -18,7 +19,7 @@ export class UserService {
 
     }
 
-    getUsers(page: number, itemsPerPage: number, userFilter: UserFilter, orderBy: string):Observable<PaginatedResult<User[]>>{
+    getUsers(page: number, itemsPerPage: number, userFilter: UserFilter, orderBy: string, likeParam?:string):Observable<PaginatedResult<User[]>>{
         const paginatedResult: PaginatedResult<User[]> = new PaginatedResult<User[]>();
         let queryString = '?';
         if (page!= null && itemsPerPage!= null){
@@ -38,6 +39,13 @@ export class UserService {
         
         if(orderBy){
           queryString+=`&orderBy=${orderBy}`
+        }
+
+        if(likeParam==='Likers'){
+          queryString+=`&likers=true`
+        }
+        if(likeParam==='Likees'){
+          queryString+=`&likees=true`
         }
 
         return this.authHttp.get(`${this.baseUrl}`+queryString).map((responsonse: Response)=>{
@@ -60,6 +68,9 @@ export class UserService {
     }
 
   private handleError(error: any) {
+    if(error.status===400){
+      return Observable.throw(error._body);
+    }
     const appError = error.headers.get("Application-Error");
     if (appError) {
       return Observable.throw(appError);
@@ -74,5 +85,10 @@ export class UserService {
       }
     return Observable.throw(modelStateError || 'Server error');
     }
+  }
+
+  public addLike(senderId: number, recipientId: number){
+    let query: string= `/${senderId}/like/${recipientId}`;
+    return this.authHttp.post(this.baseUrl+query, {}).catch(this.handleError);
   }
 }

@@ -8,6 +8,7 @@ using DatingApp.API.Data;
 using DatingApp.API.DTOs;
 using DatingApp.API.Helpers;
 using DatingApp.API.Interfaces;
+using DatingApp.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -35,8 +36,8 @@ namespace DatingApp.API.Controllers
             userParams.UserId = userFromRepo.Id;
             if (string.IsNullOrEmpty(userParams.Gender))
             {
-                userParams.Gender = userFromRepo.Gender == "male"? "female": "male";
-            }          
+                userParams.Gender = userFromRepo.Gender == "male" ? "female" : "male";
+            }
 
             var users = await this.dataContext.GetUsersAsync(userParams);
             var usersToReturn = mapper.Map<IEnumerable<UserForListDTO>>(users);
@@ -44,7 +45,7 @@ namespace DatingApp.API.Controllers
             return Ok(usersToReturn);
         }
 
-        [HttpGet("{id}", Name ="GetUser")]
+        [HttpGet("{id}", Name = "GetUser")]
         public async Task<IActionResult> GetUser(int id)
         {
             var user = await this.dataContext.GetUserAsync(id);
@@ -76,6 +77,37 @@ namespace DatingApp.API.Controllers
                 return NoContent();
 
             throw new Exception($"Update failed for user {id}");
+        }
+
+        [HttpPost("{userId}/like/{recieverId}")]
+        public async Task<IActionResult> GetLike(int userId, int recieverId)
+        {
+            var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+            if (userId != currentUserId)
+                return Unauthorized();
+
+            var like = await dataContext.GetLikeAsync(userId, recieverId);
+
+            if (like != null)
+                return BadRequest("You've already liked this user");
+
+            if (await dataContext.GetUserAsync(recieverId) == null)
+                return NotFound();
+
+            like = new Models.Like()
+            {
+                LikeeId = userId,
+                LikerId = recieverId
+            };
+
+            dataContext.AddAsync<Like>(like);
+
+            if (await dataContext.SaveAllAsync())
+                return Ok();
+
+            else
+                return BadRequest("Something went wrong");
         }
     }
 }
