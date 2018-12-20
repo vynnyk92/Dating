@@ -10,6 +10,7 @@ import "rxjs/add/observable/throw";
 import { AuthHttp } from 'angular2-jwt';
 import { PaginatedResult, UserFilter } from '../models/pagination';
 import { HttpResponse } from 'selenium-webdriver/http';
+import {Message} from "../_models/Message";
 
 @Injectable()
 export class UserService {
@@ -65,6 +66,26 @@ export class UserService {
     
     updateUser(id: number, user: User){
       return this.authHttp.put(`${this.baseUrl}/${id}`, user).catch(this.handleError);
+    }
+
+    getMessages(id:number, page?:number, itemsPerPage?: number, messageContainer?:string): Observable<PaginatedResult<Message[]>>{
+
+      const paginatedResult: PaginatedResult<Message[]> = new PaginatedResult<Message[]>();
+      let queryString = '?';
+      if (page!= null && itemsPerPage!= null){
+        queryString+=`pageNumber=${page}&pageSize=${itemsPerPage}`
+      }
+      if(messageContainer){
+        queryString+=`&MessageContainer=${messageContainer}`
+      }
+      return this.authHttp.get(this.baseUrl+`/${id}/messages`+queryString)
+      .map((res:Response)=>{
+        paginatedResult.result = res.json();
+
+        if(res.headers.get('pagination')!== null){
+          paginatedResult.pagination = JSON.parse(res.headers.get('pagination'));
+        }
+      }).catch(this.handleError);
     }
 
   private handleError(error: any) {

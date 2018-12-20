@@ -10,7 +10,7 @@ import { AuthService } from './services/auth.service';
 import { RegisterComponent } from './register/register.component';
 import { HomeComponent } from './home/home.component';
 import { AlertifyService } from './services/alertify.service';
-import { BsDropdownModule, TabsModule, BsDatepickerModule, PaginationModule } from 'ngx-bootstrap';
+import { BsDropdownModule, TabsModule, BsDatepickerModule, PaginationModule, ButtonsModule } from 'ngx-bootstrap';
 import { MemberListComponent } from './members/member-list/member-list.component';
 import { ListsComponent } from './lists/lists.component';
 import { MessagesComponent } from './messages/messages.component';
@@ -31,6 +31,7 @@ import { FileUploadModule } from '../../node_modules/ng2-file-upload/file-upload
 import { PhotoService } from './services/photo.service';
 import { MemberListResolver } from './_resolvers/member-list.resolver';
 import { ListResolver } from './_resolvers/list.resolver';
+import { MessagesResolver } from './_resolvers/messages.resolver';
 
 @NgModule({
    declarations: [
@@ -59,7 +60,8 @@ import { ListResolver } from './_resolvers/list.resolver';
       FileUploadModule,
       ReactiveFormsModule,
       BsDatepickerModule.forRoot(),
-      PaginationModule.forRoot()
+      PaginationModule.forRoot(),
+      ButtonsModule
    ],
    providers: [
       AuthService,
@@ -71,7 +73,8 @@ import { ListResolver } from './_resolvers/list.resolver';
       MemberListResolver,
       PreventUnsavedchanges,
       PhotoService,
-      ListResolver
+      ListResolver,
+      MessagesResolver
    ],
 
    bootstrap: [

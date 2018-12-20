@@ -107,5 +107,46 @@ namespace DatingApp.API.Implementations
             else
                 return user.Likee.Where(u => u.LikerId == id);
         }
+
+        public async Task<PagedList<Message>> GetMessagesForUserAsync(MessageParams messageParams)
+        {
+            var messagesQuery = dataContext.Messages
+                .Include(u => u.Sender).ThenInclude(u => u.Photos)
+                .Include(u => u.Recipient).ThenInclude(u => u.Photos)
+                .AsQueryable();
+
+            switch (messageParams.MessageContainer)
+            {
+                case "Inbox":
+                    messagesQuery = messagesQuery.Where(u=>u.RecipientId == messageParams.UserId && u.RecipientDeleted == false);
+                    break;
+                case "Outbox":
+                    messagesQuery = messagesQuery.Where(u => u.SenderId == messageParams.UserId && u.SenderDeleted == false);
+                    break;
+                default:
+                    messagesQuery = messagesQuery.Where(u => u.RecipientId == messageParams.UserId && u.RecipientDeleted == false && u.IsRead == false);
+                    break;
+            }
+
+            messagesQuery = messagesQuery.OrderByDescending(m => m.MessageSent);
+
+            return await PagedList<Message>.CreateAsync(messagesQuery, messageParams.PageNumber, messageParams.PageSize);
+        }
+
+        public async Task<IEnumerable<Message>> GetMessagesThreadAsync(int userId, int recipientId)
+        {
+            var messagesQuery = dataContext.Messages
+                    .Include(u => u.Sender).ThenInclude(u => u.Photos)
+                    .Include(u => u.Recipient).ThenInclude(u => u.Photos)
+                    .Where(m=>m.SenderId==userId && m.RecipientDeleted == false && m.RecipientId == recipientId ||
+                           m.RecipientId == userId && m.SenderId == recipientId && m.SenderDeleted  == false);
+            return await messagesQuery.OrderByDescending(m=>m.MessageSent).ToListAsync();
+        }
+
+        public async Task<Message> GetMessageAsync(int id)
+        {
+            var message = await dataContext.Messages.FirstOrDefaultAsync(m=>m.id==id);
+            return message;
+        }
     }
 }
